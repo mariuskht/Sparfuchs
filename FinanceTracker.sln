@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinanceTracker.Data", "FinanceTracker.Data\FinanceTracker.Data.csproj", "{8700A489-0F27-43DB-AFF7-7169771ABF78}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinanceTracker.Core", "FinanceTracker.Core\FinanceTracker.Core.csproj", "{78A42EEA-E675-47E8-931D-EEB56E7367C6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinanceTracker.Blazor", "FinanceTracker.Blazor\FinanceTracker.Blazor.csproj", "{BB1DFAAE-A30B-4A05-93D3-CFC8ADED8A90}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8700A489-0F27-43DB-AFF7-7169771ABF78}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8700A489-0F27-43DB-AFF7-7169771ABF78}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8700A489-0F27-43DB-AFF7-7169771ABF78}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8700A489-0F27-43DB-AFF7-7169771ABF78}.Release|Any CPU.Build.0 = Release|Any CPU
+		{78A42EEA-E675-47E8-931D-EEB56E7367C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{78A42EEA-E675-47E8-931D-EEB56E7367C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{78A42EEA-E675-47E8-931D-EEB56E7367C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{78A42EEA-E675-47E8-931D-EEB56E7367C6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BB1DFAAE-A30B-4A05-93D3-CFC8ADED8A90}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB1DFAAE-A30B-4A05-93D3-CFC8ADED8A90}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB1DFAAE-A30B-4A05-93D3-CFC8ADED8A90}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB1DFAAE-A30B-4A05-93D3-CFC8ADED8A90}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

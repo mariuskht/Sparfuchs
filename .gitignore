@@ -1,0 +1,38 @@
+/packages/
+riderModule.iml
+/_ReSharper.Caches/
+# Build results
+bin/
+obj/
+*.dll
+*.pdb
+*.exe
+
+# User-specific files
+.vs/
+.vscode/
+.idea/
+*.user
+*.userprefs
+
+# Rider
+*.sln.iml
+*.csproj.user
+
+# NuGet
+.nuget/
+*.nupkg
+packages/
+
+# Environment variables
+appsettings.Development.json
+.env
+
+# Database (lokale Datenbank nicht pushen)
+*.db
+*.db-shm
+*.db-wal
+
+# OS
+.DS_Store
+Thumbs.db
