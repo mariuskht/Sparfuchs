@@ -7,11 +7,11 @@ assignees: ''
 
 ---
 
-##Technical Description
+## Technical Description
 **A clear and concise description of what you want to happen.**
 
-##Acceptance Criteria
+## Acceptance Criteria
 **Criteria which are measurable and show that the ticket is solved.**
 
-##Additional Information
+## Additional Information
 **Add any other context or screenshots about the feature request here.**
