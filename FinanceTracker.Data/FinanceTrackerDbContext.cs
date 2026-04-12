@@ -16,11 +16,24 @@ public class FinanceTrackerDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
+        modelBuilder.Entity<User>(entity =>
+        {
+            entity.HasKey(u => u.Id);
+            entity.Property(u => u.Username).IsRequired().HasMaxLength(50);
+            entity.Property(u => u.Email).IsRequired().HasMaxLength(255);
+            entity.Property(u => u.PasswordHash).IsRequired();
+            entity.Property(u => u.PasswordSalt).IsRequired();
+            entity.HasIndex(u => u.Username).IsUnique();
+            entity.HasIndex(u => u.Email).IsUnique();
+        });
+
         modelBuilder.Entity<Account>(entity =>
         {
             entity.HasKey(a => a.Id);
             entity.Property(a => a.Name).IsRequired().HasMaxLength(255);
             entity.Property(a => a.Balance).HasPrecision(18, 2);
+            entity.HasOne(a => a.User).WithMany(u => u.Accounts).HasForeignKey(a => a.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
             entity.HasMany(a => a.Transactions).WithOne(t => t.Account).OnDelete(DeleteBehavior.Cascade);
         });
 
@@ -30,6 +43,8 @@ public class FinanceTrackerDbContext : DbContext
             entity.Property(c => c.Name).IsRequired().HasMaxLength(100);
             entity.HasIndex(c => c.Name);
             entity.HasIndex(c => new { c.AccountId, c.Name }).IsUnique();
+            entity.HasOne(c => c.User).WithMany(u => u.Categories).HasForeignKey(c => c.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<Transaction>(entity =>
@@ -38,6 +53,7 @@ public class FinanceTrackerDbContext : DbContext
             entity.Property(t => t.Amount).HasPrecision(18, 2);
             entity.HasOne(t => t.Category).WithMany(c => c.Transactions).OnDelete(DeleteBehavior.Restrict);
             entity.HasOne(t => t.Account).WithMany(a => a.Transactions).OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(t => t.User).WithMany(u => u.Transactions).OnDelete(DeleteBehavior.Cascade);
             entity.HasIndex(t => t.AccountId);
             entity.HasIndex(t => t.TransactionDate);
         });
