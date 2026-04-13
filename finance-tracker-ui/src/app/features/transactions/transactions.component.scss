@@ -1,0 +1,31 @@
+.form-panel {
+  margin-bottom: 1.5rem;
+  &__header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem;
+    h2 { margin: 0; font-size: 1.1rem; font-weight: 600; } }
+}
+
+.form-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: .75rem 1.25rem;
+  .full-width { grid-column: 1 / -1; }
+}
+
+.form-error { color: var(--color-danger); font-size: .875rem; margin: 0; }
+.form-actions { display: flex; justify-content: flex-end; gap: .75rem; padding-top: .25rem; }
+
+.select-option { display: flex; align-items: center; gap: .5rem; }
+.color-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+
+.date-cell { color: var(--color-muted); font-size: .875rem; white-space: nowrap; }
+.note-cell { color: var(--color-muted); font-size: .875rem; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.icon-btn {
+  background: transparent; border: none; padding: .4rem; border-radius: 6px;
+  cursor: pointer; display: flex; align-items: center; color: var(--color-muted); transition: background .12s;
+  mat-icon { font-size: 18px; width: 18px; height: 18px; }
+  &--danger:hover { background: #fee2e2; color: var(--color-danger); }
+  &:hover:not(.icon-btn--danger) { background: #f1f5f9; }
+}
+
+.loading-text { color: var(--color-muted); padding: 2rem 0; }
+.empty-state { display: flex; flex-direction: column; align-items: center; gap: .75rem; padding: 4rem 0; color: var(--color-muted);
+  mat-icon { font-size: 48px; width: 48px; height: 48px; opacity: .25; } p { margin: 0; } }

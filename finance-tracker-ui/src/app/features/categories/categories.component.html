@@ -1,0 +1,97 @@
+<div class="page">
+  <div class="page-header">
+    <h1>Categories</h1>
+    <button class="btn btn-primary" (click)="showForm.set(true)">
+      <span class="btn-icon">+</span> New Category
+    </button>
+  </div>
+
+  @if (showForm()) {
+    <div class="form-panel card">
+      <div class="form-panel__header">
+        <h2>New category</h2>
+        <button class="icon-btn" (click)="showForm.set(false)">✕</button>
+      </div>
+
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-grid">
+
+        <mat-form-field appearance="outline">
+          <mat-label>Name</mat-label>
+          <span matPrefix class="field-prefix">🏷️</span>
+          <input matInput formControlName="name" placeholder="e.g. Gym membership" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Description (optional)</mat-label>
+          <span matPrefix class="field-prefix">📝</span>
+          <input matInput formControlName="description" />
+        </mat-form-field>
+
+        <div class="color-field">
+          <label class="color-label">Color</label>
+          <div class="color-picker-row">
+            <input type="color" formControlName="color" class="color-input" />
+            <span class="color-value">{{ form.value.color }}</span>
+          </div>
+        </div>
+
+        @if (error) { <p class="form-error">{{ error }}</p> }
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-ghost" (click)="showForm.set(false)">Cancel</button>
+          <button type="submit" class="btn btn-primary" [disabled]="saving || form.invalid">
+            <span class="btn-icon">{{ saving ? '⏳' : '💾' }}</span>
+            {{ saving ? 'Saving…' : 'Save category' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  }
+
+  @if (loading()) {
+    <p class="loading-text">Loading…</p>
+  } @else {
+
+    <!-- User categories -->
+    <div class="section-header">
+      <h2 class="section-title">Your categories</h2>
+      <span class="badge badge-encrypted">
+        🔒 Encrypted
+      </span>
+    </div>
+
+    @if (userCategories.length === 0) {
+      <p class="empty-text">No custom categories yet.</p>
+    } @else {
+      <div class="category-grid">
+        @for (c of userCategories; track c.id) {
+          <div class="category-card">
+            <div class="category-dot" [style.background]="c.color ?? '#94a3b8'"></div>
+            <div class="category-info">
+              <span class="category-name">{{ c.name }}</span>
+              @if (c.description) { <span class="category-desc">{{ c.description }}</span> }
+            </div>
+            <button class="icon-btn icon-btn--danger" (click)="onDelete(c.id)">🗑️</button>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- Default categories -->
+    <div class="section-header" style="margin-top: 2rem">
+      <h2 class="section-title">Default categories</h2>
+      <span class="badge badge-default">System</span>
+    </div>
+
+    <div class="category-grid">
+      @for (c of defaultCategories; track c.id) {
+        <div class="category-card category-card--default">
+          <div class="category-dot" [style.background]="c.color ?? '#94a3b8'"></div>
+          <div class="category-info">
+            <span class="category-name">{{ c.name }}</span>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>

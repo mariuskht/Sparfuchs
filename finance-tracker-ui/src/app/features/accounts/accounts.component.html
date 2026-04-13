@@ -1,0 +1,103 @@
+<div class="page">
+  <div class="page-header">
+    <h1>Accounts</h1>
+    <button class="btn btn-primary" (click)="openCreate()">
+      <span class="btn-icon">+</span> New Account
+    </button>
+  </div>
+
+  @if (showForm()) {
+    <div class="form-panel card">
+      <div class="form-panel__header">
+        <h2>{{ editingId() ? 'Edit account' : 'New account' }}</h2>
+        <button class="icon-btn" (click)="showForm.set(false)">✕</button>
+      </div>
+
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-grid">
+
+        <mat-form-field appearance="outline">
+          <mat-label>Account name</mat-label>
+          <span matPrefix class="field-prefix">🏷️</span>
+          <input matInput formControlName="name" placeholder="e.g. Main Checking" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Balance (€)</mat-label>
+          <span matPrefix class="field-prefix">€</span>
+          <input matInput type="number" step="0.01" formControlName="balance" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Account type</mat-label>
+          <mat-select formControlName="type">
+            @for (t of accountTypes; track t.value) {
+              <mat-option [value]="t.value">
+                <span class="select-option">
+                  <span>{{ t.icon }}</span>
+                  {{ t.label }}
+                </span>
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        @if (error) { <p class="form-error">{{ error }}</p> }
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-ghost" (click)="showForm.set(false)">Cancel</button>
+          <button type="submit" class="btn btn-primary" [disabled]="saving || form.invalid">
+            <span class="btn-icon">{{ saving ? '⏳' : '💾' }}</span>
+            {{ saving ? 'Saving…' : 'Save account' }}
+          </button>
+        </div>
+
+      </form>
+    </div>
+  }
+
+  @if (loading()) {
+    <p class="loading-text">Loading…</p>
+  } @else if (accounts().length === 0 && !showForm()) {
+    <div class="empty-state">
+      <span style="font-size:3rem">💰</span>
+      <p>No accounts yet. Create your first one.</p>
+    </div>
+  } @else if (accounts().length > 0) {
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Account</th>
+          <th>Type</th>
+          <th>Balance</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (account of accounts(); track account.id) {
+          <tr>
+            <td>
+              <div class="account-cell">
+                <div class="account-icon">{{ typeInfo(account.type).icon }}</div>
+                <span class="account-name">{{ account.name }}</span>
+              </div>
+            </td>
+            <td>
+              <span class="type-chip">{{ typeInfo(account.type).label }}</span>
+            </td>
+            <td>
+              <span [class]="account.balance >= 0 ? 'amount-positive' : 'amount-negative'">
+                {{ account.balance | number:'1.2-2' }} €
+              </span>
+            </td>
+            <td>
+              <div class="actions">
+                <button class="icon-btn" (click)="openEdit(account)" title="Edit">✏️</button>
+                <button class="icon-btn icon-btn--danger" (click)="onDelete(account.id)" title="Delete">🗑️</button>
+              </div>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</div>
