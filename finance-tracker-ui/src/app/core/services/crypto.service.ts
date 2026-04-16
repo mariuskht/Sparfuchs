@@ -36,7 +36,6 @@ export class CryptoService {
     return new Uint8Array(plaintext);
   }
 
-  // 600 000 PBKDF2-SHA-512 iterations → AES-256-GCM wrap key
   async derivePasswordWrapKey(password: string, saltB64: string): Promise<CryptoKey> {
     const base = await this._importPbkdf2Material(password);
     return crypto.subtle.deriveKey(
@@ -95,7 +94,6 @@ export class CryptoService {
     return new TextDecoder().decode(plaintext);
   }
 
-  // Format: XXXX-XXXX-XXXX-XXXX-XXXX-XXXX (96 bits of entropy)
   generateRecoveryPhrase(): string {
     const bytes = crypto.getRandomValues(new Uint8Array(12));
     const hex = Array.from(bytes, b => b.toString(16).padStart(2, '0').toUpperCase());
@@ -108,7 +106,13 @@ export class CryptoService {
 
   toBase64(data: ArrayBuffer | Uint8Array): string {
     const bytes = data instanceof Uint8Array ? data : new Uint8Array(data);
-    return btoa(String.fromCharCode(...bytes));
+    var binary = '';
+    const chunkSize = 8192;
+    for (let i = 0; i < bytes.length; i += chunkSize) {
+      const chunk = bytes.subarray(i, i + chunkSize);
+      binary += String.fromCharCode(...chunk);
+    }
+    return btoa(binary);
   }
 
   fromBase64(b64: string): Uint8Array<ArrayBuffer> {

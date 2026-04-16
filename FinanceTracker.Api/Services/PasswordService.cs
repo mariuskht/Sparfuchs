@@ -25,6 +25,6 @@ public class PasswordService : IPasswordService
     {
         using var hmac = new HMACSHA256(hmacKey);
         return Convert.ToBase64String(
-            hmac.ComputeHash(Encoding.UTF8.GetBytes(email.ToLowerInvariant())));
+            hmac.ComputeHash(Encoding.UTF8.GetBytes(email.Trim().ToLowerInvariant())));
     }
 }
