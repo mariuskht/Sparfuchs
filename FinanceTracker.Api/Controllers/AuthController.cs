@@ -151,9 +151,21 @@ public class AuthController : ControllerBase
             return Unauthorized(new { message = "Invalid recovery credentials." });
 
         // Timing-safe comparison to prevent timing attacks on the verifier
+        byte[] storedRecoveryVerifier;
+        byte[] providedRecoveryVerifier;
+        try
+        {
+            storedRecoveryVerifier = Convert.FromBase64String(user.RecoveryVerifier);
+            providedRecoveryVerifier = Convert.FromBase64String(req.RecoveryVerifier);
+        }
+        catch (FormatException)
+        {
+            return Unauthorized(new { message = "Invalid recovery credentials." });
+        }
+
         if (!CryptographicOperations.FixedTimeEquals(
-                Convert.FromBase64String(user.RecoveryVerifier),
-                Convert.FromBase64String(req.RecoveryVerifier)))
+                storedRecoveryVerifier,
+                providedRecoveryVerifier))
             return Unauthorized(new { message = "Invalid recovery credentials." });
 
         SetAuthCookie(_tokens.GenerateToken(user.Id));
