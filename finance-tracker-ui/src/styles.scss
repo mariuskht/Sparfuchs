@@ -184,3 +184,10 @@ html, body {
   &-encrypted { background: #d1fae5; color: #065f46; }
   &-default   { background: #e0e7ff; color: #3730a3; }
 }
+
+// Override Material sidenav background
+.mat-drawer-inner-container {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}

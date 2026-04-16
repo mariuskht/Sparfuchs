@@ -7,11 +7,10 @@ public class Transaction
     public Guid AccountId { get; set; }
     public Guid CategoryId { get; set; }
 
-    // --- Encrypted (AES-256-GCM) ---
-    public string EncryptedAmount { get; set; } = string.Empty; // decimal serialized as string, then encrypted
-    public string? EncryptedNote { get; set; }                  // optional transaction label/description
+    public string EncryptedAmount { get; set; } = string.Empty;
+    public string? EncryptedNote { get; set; }
 
-    // --- Not encrypted: needed for server-side sorting and range queries ---
+    // Stored as plaintext to allow server-side sorting and date range queries
     public DateTime TransactionDate { get; set; } = DateTime.UtcNow;
 
     public User? User { get; set; }

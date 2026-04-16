@@ -29,7 +29,6 @@ export class TransactionsComponent implements OnInit {
   loading = signal(true);
   showForm = signal(false);
   editingId = signal<string | null>(null);
-  editingTx = signal<Transaction | null>(null);
   form: FormGroup;
   saving = false;
   error: string | null = null;
@@ -56,7 +55,7 @@ export class TransactionsComponent implements OnInit {
       this.categoryService.getAll(),
     ]);
     this.transactions.set(t);
-    this.accounts.set(a);
+    this.accounts.set(this.accountService.withTransactionTotals(a, t));
     this.categories.set(c);
     this.loading.set(false);
   }
@@ -64,7 +63,6 @@ export class TransactionsComponent implements OnInit {
   openCreate() {
     this.form.reset({ transactionDate: new Date().toISOString().substring(0, 10) });
     this.editingId.set(null);
-    this.editingTx.set(null);
     this.showForm.set(true);
   }
 
@@ -77,14 +75,12 @@ export class TransactionsComponent implements OnInit {
       transactionDate: tx.transactionDate.toISOString().substring(0, 10),
     });
     this.editingId.set(tx.id);
-    this.editingTx.set(tx);
     this.showForm.set(true);
   }
 
   closeForm() {
     this.showForm.set(false);
     this.editingId.set(null);
-    this.editingTx.set(null);
     this.error = null;
   }
 
@@ -97,7 +93,7 @@ export class TransactionsComponent implements OnInit {
       this.accountService.getAll(),
     ]);
     this.transactions.set(t);
-    this.accounts.set(a);
+    this.accounts.set(this.accountService.withTransactionTotals(a, t));
   }
 
   async onSubmit() {
@@ -107,9 +103,9 @@ export class TransactionsComponent implements OnInit {
       const { accountId, categoryId, amount, note, transactionDate } = this.form.value;
       const date = new Date(transactionDate);
       const id = this.editingId();
-      if (id && this.editingTx()) {
+      if (id) {
         await this.transactionService.update(
-          id, accountId, categoryId, amount, date, note || undefined, this.editingTx()!,
+          id, accountId, categoryId, amount, date, note || undefined,
         );
       } else {
         await this.transactionService.create(accountId, categoryId, amount, date, note || undefined);
@@ -122,7 +118,7 @@ export class TransactionsComponent implements OnInit {
 
   async onDelete(tx: Transaction) {
     if (!confirm('Delete this transaction?')) return;
-    await this.transactionService.delete(tx.id, tx);
+    await this.transactionService.delete(tx.id);
     await this.reload();
   }
 }

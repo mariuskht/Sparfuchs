@@ -4,6 +4,7 @@ import { RouterLink } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { AuthService } from '../../core/services/auth.service';
 import { AccountService } from '../../core/services/account.service';
+import { TransactionService } from '../../core/services/transaction.service';
 import { Account, AccountType } from '../../core/models/account.model';
 
 @Component({
@@ -17,10 +18,18 @@ export class DashboardComponent implements OnInit {
   accounts = signal<Account[]>([]);
   loading = signal(true);
 
-  constructor(public auth: AuthService, private accountService: AccountService) {}
+  constructor(
+    public auth: AuthService,
+    private accountService: AccountService,
+    private transactionService: TransactionService,
+  ) {}
 
   async ngOnInit() {
-    this.accounts.set(await this.accountService.getAll());
+    const [accounts, transactions] = await Promise.all([
+      this.accountService.getAll(),
+      this.transactionService.getAll(),
+    ]);
+    this.accounts.set(this.accountService.withTransactionTotals(accounts, transactions));
     this.loading.set(false);
   }
 

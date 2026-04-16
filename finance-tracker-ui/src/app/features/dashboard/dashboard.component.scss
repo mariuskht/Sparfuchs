@@ -34,7 +34,11 @@
 .section-title { font-size: 1rem; font-weight: 600; margin: 0 0 1rem; color: var(--color-muted); text-transform: uppercase; letter-spacing: .05em; }
 
 // Account grid
-.account-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 1rem; }
+.account-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 1rem;
+}
 
 .account-card {
   background: var(--color-surface);

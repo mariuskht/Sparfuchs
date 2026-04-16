@@ -13,8 +13,6 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withInterceptors([authInterceptor])),
     provideAnimationsAsync(),
     {
-      // Restore the encryption key from sessionStorage before any route guard runs.
-      // Without this, a page refresh would always redirect to /login.
       provide: APP_INITIALIZER,
       useFactory: (auth: AuthService) => () => auth.restoreSession(),
       deps: [AuthService],

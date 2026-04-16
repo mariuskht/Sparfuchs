@@ -4,19 +4,19 @@ public class User
 {
     public Guid Id { get; set; }
 
-    // --- Authentication (used only for login verification) ---
     public string PasswordHash { get; set; } = string.Empty;
-    public string AuthSalt { get; set; } = string.Empty;         // salt for PBKDF2 password hash
+    public string AuthSalt { get; set; } = string.Empty;
 
-    // --- Key derivation (used to re-derive the in-memory encryption key after login) ---
-    public string EncryptionSalt { get; set; } = string.Empty;   // salt for PBKDF2 key derivation
+    // Two wrapped copies of the master key — one per unlock path (password / recovery phrase)
+    public string EncryptionSalt { get; set; } = string.Empty;
+    public string PasswordWrappedKey { get; set; } = string.Empty;
+    public string RecoverySalt { get; set; } = string.Empty;
+    public string RecoveryWrappedKey { get; set; } = string.Empty;
+    public string RecoveryVerifier { get; set; } = string.Empty;
 
-    // --- Pseudonymous lookup (not reversible, no plaintext stored) ---
-    // HMAC-SHA256(email.toLower(), serverHmacKey) — lets us find users by email at login
-    // without ever storing the email in plaintext in the database.
+    // HMAC-SHA256(email, serverKey) — enables login lookup without storing plaintext email
     public string EmailHmac { get; set; } = string.Empty;
 
-    // --- Encrypted personal data (AES-256-GCM, key never stored) ---
     public string EncryptedUsername { get; set; } = string.Empty;
     public string EncryptedEmail { get; set; } = string.Empty;
 

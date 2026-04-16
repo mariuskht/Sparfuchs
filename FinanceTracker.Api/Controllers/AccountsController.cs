@@ -67,7 +67,7 @@ public class AccountsController : ControllerBase
             UserId = CurrentUserId,
             EncryptedName = req.EncryptedName,
             EncryptedBalance = req.EncryptedBalance,
-            Type = (FinanceTracker.Core.Enums.AccountType)req.Type,
+            Type = req.Type,
         };
 
         _db.Accounts.Add(account);

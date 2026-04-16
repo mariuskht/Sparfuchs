@@ -3,7 +3,6 @@ import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { CryptoService } from './crypto.service';
 import { AuthService } from './auth.service';
-import { AccountService } from './account.service';
 import { Transaction, TransactionResponse } from '../models/transaction.model';
 import { environment } from '../../../environments/environment';
 
@@ -16,7 +15,6 @@ export class TransactionService {
     private http: HttpClient,
     private crypto: CryptoService,
     private auth: AuthService,
-    private accountService: AccountService,
   ) {}
 
   async getAll(accountId?: string): Promise<Transaction[]> {
@@ -48,9 +46,6 @@ export class TransactionService {
       }),
     );
 
-    // Update account balance
-    await this.accountService.adjustBalance(accountId, amount);
-
     return this.decrypt(response);
   }
 
@@ -61,7 +56,6 @@ export class TransactionService {
     amount: number,
     transactionDate: Date,
     note: string | undefined,
-    oldTransaction: Transaction,
   ): Promise<void> {
     const key = this.auth.encryptionKey;
     const [encryptedAmount, encryptedNote] = await Promise.all([
@@ -78,22 +72,10 @@ export class TransactionService {
         transactionDate: transactionDate.toISOString(),
       }),
     );
-
-    // Adjust balances: reverse old amount, apply new amount
-    if (oldTransaction.accountId === accountId) {
-      await this.accountService.adjustBalance(accountId, amount - oldTransaction.amount);
-    } else {
-      await Promise.all([
-        this.accountService.adjustBalance(oldTransaction.accountId, -oldTransaction.amount),
-        this.accountService.adjustBalance(accountId, amount),
-      ]);
-    }
   }
 
-  async delete(id: string, transaction: Transaction): Promise<void> {
+  async delete(id: string): Promise<void> {
     await firstValueFrom(this.http.delete(`${this.apiUrl}/${id}`));
-    // Reverse the transaction's effect on account balance
-    await this.accountService.adjustBalance(transaction.accountId, -transaction.amount);
   }
 
   private async decrypt(r: TransactionResponse): Promise<Transaction> {

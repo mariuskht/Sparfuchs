@@ -1,121 +1,127 @@
 import { Injectable } from '@angular/core';
 
-/**
- * All cryptographic operations run exclusively in the browser via the Web Crypto API.
- * No keys, plaintexts, or secrets ever leave the browser or reach the server.
- *
- * Algorithm:  AES-256-GCM  (authenticated encryption)
- * Key derivation: PBKDF2-SHA512, 600 000 iterations
- * Wire format: Base64( IV(12 bytes) | ciphertext+tag(n+16 bytes) )
- */
 @Injectable({ providedIn: 'root' })
 export class CryptoService {
 
-  private readonly PBKDF2_ITERATIONS = 600_000;
-  private readonly IV_LENGTH = 12;
-
-  // ─── Key derivation ───────────────────────────────────────────────────────
-
-  /** Generates 32 cryptographically random bytes, returned as Base64. */
-  generateSalt(): string {
-    const salt = crypto.getRandomValues(new Uint8Array(32));
-    return this.toBase64(salt);
+  generateMasterKey(): Uint8Array<ArrayBuffer> {
+    return crypto.getRandomValues(new Uint8Array(32));
   }
 
-  /**
-   * Derives a non-extractable AES-256-GCM key from a password and Base64-encoded salt.
-   * The key stays inside the browser's WebCrypto key store — it cannot be exported.
-   */
-  async deriveKey(password: string, saltBase64: string): Promise<CryptoKey> {
-    const passwordKey = await crypto.subtle.importKey(
-      'raw',
-      new TextEncoder().encode(password),
-      'PBKDF2',
-      false,
-      ['deriveKey'],
-    );
+  generateSaltB64(): string {
+    return this.toBase64(crypto.getRandomValues(new Uint8Array(16)));
+  }
 
+  async importAesKey(raw: Uint8Array<ArrayBuffer>): Promise<CryptoKey> {
+    return crypto.subtle.importKey('raw', raw, { name: 'AES-GCM' }, false, ['encrypt', 'decrypt']);
+  }
+
+  // Key wrapping: base64( IV[12] || AES-GCM-ciphertext+tag )
+
+  async wrapKey(masterKeyRaw: Uint8Array<ArrayBuffer>, wrappingKey: CryptoKey): Promise<string> {
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+    const ciphertext = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, wrappingKey, masterKeyRaw);
+    const combined = new Uint8Array(12 + ciphertext.byteLength);
+    combined.set(iv);
+    combined.set(new Uint8Array(ciphertext), 12);
+    return this.toBase64(combined);
+  }
+
+  async unwrapKey(wrappedB64: string, wrappingKey: CryptoKey): Promise<Uint8Array<ArrayBuffer>> {
+    const combined = this.fromBase64(wrappedB64);
+    const plaintext = await crypto.subtle.decrypt(
+      { name: 'AES-GCM', iv: combined.slice(0, 12) },
+      wrappingKey,
+      combined.slice(12),
+    );
+    return new Uint8Array(plaintext);
+  }
+
+  // 600 000 PBKDF2-SHA-512 iterations → AES-256-GCM wrap key
+  async derivePasswordWrapKey(password: string, saltB64: string): Promise<CryptoKey> {
+    const base = await this._importPbkdf2Material(password);
     return crypto.subtle.deriveKey(
-      {
-        name: 'PBKDF2',
-        salt: this.fromBase64(saltBase64).buffer as ArrayBuffer,
-        iterations: this.PBKDF2_ITERATIONS,
-        hash: 'SHA-512',
-      },
-      passwordKey,
+      { name: 'PBKDF2', hash: 'SHA-512', salt: this.fromBase64(saltB64), iterations: 600_000 },
+      base,
       { name: 'AES-GCM', length: 256 },
-      true,           // extractable so we can persist it in sessionStorage for refresh survival
+      false,
       ['encrypt', 'decrypt'],
     );
   }
 
-  /** Exports an AES-GCM key to a Base64 string for sessionStorage. */
-  async exportKey(key: CryptoKey): Promise<string> {
-    const raw = await crypto.subtle.exportKey('raw', key);
-    return this.toBase64(new Uint8Array(raw));
-  }
-
-  /** Re-imports a Base64 AES-GCM key from sessionStorage. */
-  async importSessionKey(keyBase64: string): Promise<CryptoKey> {
-    const raw = this.fromBase64(keyBase64).buffer as ArrayBuffer;
-    return crypto.subtle.importKey(
-      'raw',
-      raw,
+  async deriveRecoveryWrapKey(phrase: string, saltB64: string): Promise<CryptoKey> {
+    const base = await this._importPbkdf2Material(phrase);
+    return crypto.subtle.deriveKey(
+      { name: 'PBKDF2', hash: 'SHA-512', salt: this.fromBase64(saltB64), iterations: 600_000 },
+      base,
       { name: 'AES-GCM', length: 256 },
-      true,
+      false,
       ['encrypt', 'decrypt'],
     );
   }
 
-  // ─── Encrypt / Decrypt ───────────────────────────────────────────────────
+  // Deterministic verifier the server can compare without knowing the phrase or master key
+  async deriveRecoveryVerifier(phrase: string, saltB64: string): Promise<string> {
+    const base = await this._importPbkdf2Material(phrase);
+    const bits = await crypto.subtle.deriveBits(
+      { name: 'PBKDF2', hash: 'SHA-256', salt: this.fromBase64(saltB64), iterations: 200_000 },
+      base,
+      256,
+    );
+    return this.toBase64(bits);
+  }
 
-  /**
-   * Encrypts a string with AES-256-GCM.
-   * Returns Base64( IV(12) | ciphertext+authTag(n+16) )
-   */
+  // Data encryption: base64( IV[12] || AES-GCM-ciphertext+tag )
+
   async encrypt(plaintext: string, key: CryptoKey): Promise<string> {
-    const iv = crypto.getRandomValues(new Uint8Array(this.IV_LENGTH));
-    const encoded = new TextEncoder().encode(plaintext);
-
-    // Web Crypto automatically appends the 16-byte auth tag to the ciphertext
+    const iv = crypto.getRandomValues(new Uint8Array(12));
     const ciphertext = await crypto.subtle.encrypt(
       { name: 'AES-GCM', iv },
       key,
-      encoded,
+      new TextEncoder().encode(plaintext),
     );
-
-    const result = new Uint8Array(this.IV_LENGTH + ciphertext.byteLength);
-    result.set(iv, 0);
-    result.set(new Uint8Array(ciphertext), this.IV_LENGTH);
-
-    return this.toBase64(result);
+    const combined = new Uint8Array(12 + ciphertext.byteLength);
+    combined.set(iv);
+    combined.set(new Uint8Array(ciphertext), 12);
+    return this.toBase64(combined);
   }
 
-  /**
-   * Decrypts a Base64-encoded AES-256-GCM ciphertext.
-   * Throws if the data was tampered with or the wrong key is used.
-   */
-  async decrypt(ciphertextBase64: string, key: CryptoKey): Promise<string> {
-    const data = this.fromBase64(ciphertextBase64);
-    const iv = data.slice(0, this.IV_LENGTH);
-    const ciphertext = data.slice(this.IV_LENGTH);
-
+  async decrypt(ciphertextB64: string, key: CryptoKey): Promise<string> {
+    const combined = this.fromBase64(ciphertextB64);
     const plaintext = await crypto.subtle.decrypt(
-      { name: 'AES-GCM', iv },
+      { name: 'AES-GCM', iv: combined.slice(0, 12) },
       key,
-      ciphertext,
+      combined.slice(12),
     );
-
     return new TextDecoder().decode(plaintext);
   }
 
-  // ─── Helpers ─────────────────────────────────────────────────────────────
+  // Format: XXXX-XXXX-XXXX-XXXX-XXXX-XXXX (96 bits of entropy)
+  generateRecoveryPhrase(): string {
+    const bytes = crypto.getRandomValues(new Uint8Array(12));
+    const hex = Array.from(bytes, b => b.toString(16).padStart(2, '0').toUpperCase());
+    const groups: string[] = [];
+    for (let i = 0; i < hex.length; i += 2) {
+      groups.push(hex[i] + hex[i + 1]);
+    }
+    return groups.join('-');
+  }
 
-  toBase64(bytes: Uint8Array): string {
+  toBase64(data: ArrayBuffer | Uint8Array): string {
+    const bytes = data instanceof Uint8Array ? data : new Uint8Array(data);
     return btoa(String.fromCharCode(...bytes));
   }
 
-  fromBase64(b64: string): Uint8Array {
-    return Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+  fromBase64(b64: string): Uint8Array<ArrayBuffer> {
+    return new Uint8Array(Uint8Array.from(atob(b64), c => c.charCodeAt(0)));
+  }
+
+  private async _importPbkdf2Material(material: string): Promise<CryptoKey> {
+    return crypto.subtle.importKey(
+      'raw',
+      new TextEncoder().encode(material),
+      'PBKDF2',
+      false,
+      ['deriveKey', 'deriveBits'],
+    );
   }
 }

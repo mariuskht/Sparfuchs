@@ -49,18 +49,33 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             IssuerSigningKey = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Secret"]!)),
         };
+
+        // Read the JWT from the httpOnly cookie when no Authorization header is present
+        options.Events = new Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerEvents
+        {
+            OnMessageReceived = ctx =>
+            {
+                if (string.IsNullOrEmpty(ctx.Request.Headers.Authorization) &&
+                    ctx.Request.Cookies.TryGetValue("ft_auth", out var token))
+                {
+                    ctx.Token = token;
+                }
+                return Task.CompletedTask;
+            }
+        };
     });
 
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 
-// --- CORS: allow Angular dev server ---
+// --- CORS: allow Angular dev server (credentials required for httpOnly cookie) ---
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("Angular", policy =>
         policy.WithOrigins("http://localhost:4200")
               .AllowAnyHeader()
-              .AllowAnyMethod());
+              .AllowAnyMethod()
+              .AllowCredentials());
 });
 
 var app = builder.Build();

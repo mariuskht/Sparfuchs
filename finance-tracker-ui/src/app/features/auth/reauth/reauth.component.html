@@ -1,0 +1,35 @@
+<div class="auth-layout">
+  <div class="auth-brand">
+    <div class="brand-logo">🏦</div>
+    <h1>FinanceTracker</h1>
+    <p>Your data. Only yours.</p>
+  </div>
+
+  <div class="auth-card">
+    <h2>Welcome back</h2>
+    <p class="auth-subtitle">Enter your password to unlock your encrypted data.</p>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Password</mat-label>
+        <span matPrefix class="field-prefix">🔒</span>
+        <input matInput type="password" formControlName="password" autocomplete="current-password" autofocus />
+      </mat-form-field>
+
+      @if (error) {
+        <div class="auth-error">
+          <span>⚠️</span>
+          <span>{{ error }}</span>
+        </div>
+      }
+
+      <button type="submit" class="btn btn-primary btn-full" [disabled]="loading || form.invalid">
+        @if (loading) { <span class="btn-icon spin">🔄</span> Unlocking… }
+        @else { <span class="btn-icon">→</span> Unlock }
+      </button>
+    </form>
+
+    <p class="auth-link">Not you? <a (click)="goToLogin()" href="javascript:void(0)">Sign in with a different account</a></p>
+  </div>
+</div>

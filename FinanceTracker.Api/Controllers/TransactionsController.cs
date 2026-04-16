@@ -66,10 +66,20 @@ public class TransactionsController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateTransactionRequest req)
     {
-        // Verify account belongs to current user
+        // Verify category exists and is either owned by the current user or is a default category
+        var categoryExists = await _db.Categories.AnyAsync(c =>
+            c.Id == req.CategoryId && (c.UserId == CurrentUserId || c.UserId == null));
+        if (!categoryExists)
+        {
+            return BadRequest(new { message = "Category not found." });
+        }
+
         var accountExists = await _db.Accounts
             .AnyAsync(a => a.Id == req.AccountId && a.UserId == CurrentUserId);
-        if (!accountExists) return BadRequest(new { message = "Account not found." });
+        if (!accountExists)
+        {
+            return BadRequest(new { message = "Account not found." });
+        }
 
         var transaction = new Transaction
         {
@@ -99,6 +109,21 @@ public class TransactionsController : ControllerBase
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateTransactionRequest req)
     {
+        // Verify category exists and is either owned by the current user or is a default category
+        var categoryExists = await _db.Categories.AnyAsync(c =>
+            c.Id == req.CategoryId && (c.UserId == CurrentUserId || c.UserId == null));
+        if (!categoryExists)
+        {
+            return BadRequest(new { message = "Category not found." });
+        }
+
+        var accountExists = await _db.Accounts
+            .AnyAsync(a => a.Id == req.AccountId && a.UserId == CurrentUserId);
+        if (!accountExists)
+        {
+            return BadRequest(new { message = "Account not found." });
+        }
+
         var transaction = await _db.Transactions
             .FirstOrDefaultAsync(t => t.Id == id && t.UserId == CurrentUserId);
 

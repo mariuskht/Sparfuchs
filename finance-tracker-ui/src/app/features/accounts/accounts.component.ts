@@ -6,6 +6,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { AccountService } from '../../core/services/account.service';
+import { TransactionService } from '../../core/services/transaction.service';
 import { Account, AccountType } from '../../core/models/account.model';
 
 @Component({
@@ -34,7 +35,11 @@ export class AccountsComponent implements OnInit {
     { value: AccountType.CreditCard, label: 'Credit Card',  icon: '💳' },
   ];
 
-  constructor(private fb: FormBuilder, private accountService: AccountService) {
+  constructor(
+    private fb: FormBuilder,
+    private accountService: AccountService,
+    private transactionService: TransactionService,
+  ) {
     this.form = this.fb.group({
       name:    ['', Validators.required],
       balance: [0, Validators.required],
@@ -43,8 +48,16 @@ export class AccountsComponent implements OnInit {
   }
 
   async ngOnInit() {
-    this.accounts.set(await this.accountService.getAll());
+    await this.loadAccounts();
     this.loading.set(false);
+  }
+
+  private async loadAccounts() {
+    const [accounts, transactions] = await Promise.all([
+      this.accountService.getAll(),
+      this.transactionService.getAll(),
+    ]);
+    this.accounts.set(this.accountService.withTransactionTotals(accounts, transactions));
   }
 
   openCreate() {
@@ -54,7 +67,7 @@ export class AccountsComponent implements OnInit {
   }
 
   openEdit(account: Account) {
-    this.form.setValue({ name: account.name, balance: account.balance, type: account.type });
+    this.form.setValue({ name: account.name, balance: account.initialBalance, type: account.type });
     this.editingId.set(account.id);
     this.showForm.set(true);
   }
@@ -68,7 +81,7 @@ export class AccountsComponent implements OnInit {
       const id = this.editingId();
       if (id) await this.accountService.update(id, name, balance, type);
       else     await this.accountService.create(name, balance, type);
-      this.accounts.set(await this.accountService.getAll());
+      await this.loadAccounts();
       this.showForm.set(false);
     } catch { this.error = 'Failed to save account.'; }
     finally   { this.saving = false; }
@@ -77,7 +90,7 @@ export class AccountsComponent implements OnInit {
   async onDelete(id: string) {
     if (!confirm('Delete this account and all its transactions?')) return;
     await this.accountService.delete(id);
-    this.accounts.set(await this.accountService.getAll());
+    await this.loadAccounts();
   }
 
   typeInfo(type: AccountType) {

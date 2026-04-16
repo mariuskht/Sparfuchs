@@ -14,6 +14,16 @@ export const routes: Routes = [
       import('./features/auth/register/register.component').then(m => m.RegisterComponent),
   },
   {
+    path: 'reauth',
+    loadComponent: () =>
+      import('./features/auth/reauth/reauth.component').then(m => m.ReauthComponent),
+  },
+  {
+    path: 'recover',
+    loadComponent: () =>
+      import('./features/auth/recover/recover.component').then(m => m.RecoverComponent),
+  },
+  {
     path: '',
     canActivate: [authGuard],
     loadComponent: () =>
@@ -38,6 +48,11 @@ export const routes: Routes = [
         path: 'categories',
         loadComponent: () =>
           import('./features/categories/categories.component').then(m => m.CategoriesComponent),
+      },
+      {
+        path: 'profile',
+        loadComponent: () =>
+          import('./features/profile/profile.component').then(m => m.ProfileComponent),
       },
     ],
   },

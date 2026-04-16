@@ -19,6 +19,9 @@ export interface AccountResponse {
 export interface Account {
   id: string;
   name: string;
+  /** Opening/starting balance stored on the server (never auto-updated by transactions). */
+  initialBalance: number;
+  /** Current balance = initialBalance + Σ transactions. Equals initialBalance until withTransactionTotals() is called. */
   balance: number;
   type: AccountType;
   createdAt: Date;

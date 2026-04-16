@@ -4,20 +4,17 @@ public class Category
 {
     public Guid Id { get; set; }
 
-    /// <summary>
-    /// Null for default (system) categories — they are not personal data.
-    /// Set for user-created categories (IsDefault = false).
-    /// </summary>
+    // Null for system-wide default categories, set for user-created ones
     public Guid? UserId { get; set; }
 
     public bool IsDefault { get; set; }
 
-    // --- Plaintext: only populated for default (system) categories (IsDefault = true) ---
+    // Plaintext — only for default (system) categories
     public string? Name { get; set; }
     public string? Color { get; set; }
     public string? Description { get; set; }
 
-    // --- Encrypted (AES-256-GCM): only populated for user-created categories (IsDefault = false) ---
+    // Encrypted — only for user-created categories
     public string? EncryptedName { get; set; }
     public string? EncryptedColor { get; set; }
     public string? EncryptedDescription { get; set; }

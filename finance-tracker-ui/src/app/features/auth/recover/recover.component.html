@@ -6,8 +6,10 @@
   </div>
 
   <div class="auth-card">
-    <h2>Welcome back</h2>
-    <p class="auth-subtitle">Sign in to access your encrypted financial data.</p>
+    <h2>Recover account</h2>
+    <p class="auth-subtitle">
+      Enter your email and recovery phrase to regain access to your encrypted data.
+    </p>
 
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
 
@@ -18,9 +20,12 @@
       </mat-form-field>
 
       <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Password</mat-label>
-        <span matPrefix class="field-prefix">🔒</span>
-        <input matInput type="password" formControlName="password" autocomplete="current-password" />
+        <mat-label>Recovery phrase</mat-label>
+        <span matPrefix class="field-prefix">🔑</span>
+        <input matInput type="text" formControlName="phrase"
+               autocomplete="off" spellcheck="false"
+               placeholder="XXXX-XXXX-XXXX-XXXX-XXXX-XXXX" />
+        <mat-hint>The 6-group phrase shown when you registered.</mat-hint>
       </mat-form-field>
 
       @if (error) {
@@ -31,12 +36,11 @@
       }
 
       <button type="submit" class="btn btn-primary btn-full" [disabled]="loading || form.invalid">
-        @if (loading) { <span class="btn-icon spin">🔄</span> Signing in… }
-        @else { <span class="btn-icon">→</span> Sign in }
+        @if (loading) { <span class="btn-icon spin">🔄</span> Recovering… }
+        @else { <span class="btn-icon">→</span> Recover account }
       </button>
     </form>
 
-    <p class="auth-link">No account? <a routerLink="/register">Create one</a></p>
-    <p class="auth-link">Forgot your password? <a routerLink="/recover">Recover with key</a></p>
+    <p class="auth-link">Remember your password? <a routerLink="/login">Sign in</a></p>
   </div>
 </div>

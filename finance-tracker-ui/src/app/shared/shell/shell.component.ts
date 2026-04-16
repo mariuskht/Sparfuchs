@@ -27,6 +27,7 @@ export class ShellComponent {
     { label: 'Accounts',     icon: '💰', route: '/accounts'     },
     { label: 'Transactions', icon: '💸', route: '/transactions' },
     { label: 'Categories',   icon: '🏷️', route: '/categories'   },
+    { label: 'Profile',      icon: '👤', route: '/profile'      },
   ];
 
   constructor(public auth: AuthService) {}
