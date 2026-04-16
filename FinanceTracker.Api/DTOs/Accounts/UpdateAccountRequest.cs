@@ -6,5 +6,7 @@ public class UpdateAccountRequest
 {
     [Required] public string EncryptedName { get; set; } = string.Empty;
     [Required] public string EncryptedBalance { get; set; } = string.Empty;
-    [Required] public int Type { get; set; }
+    [Required]
+    [EnumDataType(typeof(AccountType))]
+    public AccountType Type { get; set; }
 }
