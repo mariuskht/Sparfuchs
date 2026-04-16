@@ -1,0 +1,40 @@
+.form-panel { margin-bottom: 1.5rem;
+  &__header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem;
+    h2 { margin: 0; font-size: 1.1rem; font-weight: 600; } } }
+
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem 1.25rem; }
+.form-error { color: var(--color-danger); font-size: .875rem; margin: 0; grid-column: 1 / -1; }
+.form-actions { display: flex; justify-content: flex-end; gap: .75rem; grid-column: 1 / -1; }
+
+.color-field { display: flex; flex-direction: column; gap: .375rem; }
+.color-label { font-size: .875rem; font-weight: 500; color: var(--color-muted); }
+.color-picker-row { display: flex; align-items: center; gap: .75rem; }
+.color-input { width: 48px; height: 40px; border: 1px solid var(--color-border); border-radius: 8px; padding: 2px; cursor: pointer; background: none; }
+.color-value { font-size: .875rem; color: var(--color-muted); font-family: monospace; }
+
+.section-header { display: flex; align-items: center; gap: .75rem; margin-bottom: 1rem; }
+.section-title { font-size: .875rem; font-weight: 600; color: var(--color-muted); text-transform: uppercase; letter-spacing: .05em; margin: 0; }
+
+.category-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: .75rem; margin-bottom: 1.5rem; }
+
+.category-card {
+  display: flex; align-items: center; gap: .875rem;
+  background: var(--color-surface); border: 1px solid var(--color-border);
+  border-radius: var(--radius); padding: .875rem 1rem;
+  box-shadow: var(--shadow); transition: box-shadow .15s;
+  &:hover { box-shadow: var(--shadow-md); }
+  &--default { opacity: .8; }
+}
+
+.category-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+
+.category-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: .125rem; }
+.category-name { font-size: .9375rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.category-desc { font-size: .8125rem; color: var(--color-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.icon-btn { background: transparent; border: none; padding: .35rem; border-radius: 6px; cursor: pointer;
+  display: flex; align-items: center; color: var(--color-muted); transition: background .12s;
+  mat-icon { font-size: 17px; width: 17px; height: 17px; }
+  &--danger:hover { background: #fee2e2; color: var(--color-danger); } }
+
+.loading-text, .empty-text { color: var(--color-muted); font-size: .9rem; padding: 1rem 0; }

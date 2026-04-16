@@ -1,0 +1,46 @@
+<div class="auth-layout">
+  <div class="auth-brand">
+    <div class="brand-logo">🏦</div>
+    <h1>FinanceTracker</h1>
+    <p>Your data. Only yours.</p>
+  </div>
+
+  <div class="auth-card">
+    <h2>Recover account</h2>
+    <p class="auth-subtitle">
+      Enter your email and recovery phrase to regain access to your encrypted data.
+    </p>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Email address</mat-label>
+        <span matPrefix class="field-prefix">✉️</span>
+        <input matInput type="email" formControlName="email" autocomplete="email" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Recovery phrase</mat-label>
+        <span matPrefix class="field-prefix">🔑</span>
+        <input matInput type="text" formControlName="phrase"
+               autocomplete="off" spellcheck="false"
+               placeholder="XXXX-XXXX-XXXX-XXXX-XXXX-XXXX" />
+        <mat-hint>The 6-group phrase shown when you registered.</mat-hint>
+      </mat-form-field>
+
+      @if (error) {
+        <div class="auth-error">
+          <span>⚠️</span>
+          <span>{{ error }}</span>
+        </div>
+      }
+
+      <button type="submit" class="btn btn-primary btn-full" [disabled]="loading || form.invalid">
+        @if (loading) { <span class="btn-icon spin">🔄</span> Recovering… }
+        @else { <span class="btn-icon">→</span> Recover account }
+      </button>
+    </form>
+
+    <p class="auth-link">Remember your password? <a routerLink="/login">Sign in</a></p>
+  </div>
+</div>

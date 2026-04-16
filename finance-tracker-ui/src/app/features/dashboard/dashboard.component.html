@@ -1,0 +1,68 @@
+<div class="page">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div>
+      <h1>Dashboard</h1>
+      <p class="subtitle">Welcome back, <strong>{{ auth.currentUser()?.username }}</strong></p>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="loading-state">
+      <mat-icon>hourglass_empty</mat-icon>
+      <span>Loading your data…</span>
+    </div>
+  } @else {
+
+    <!-- Summary cards -->
+    <div class="summary-grid">
+      <div class="summary-card">
+        <div class="summary-icon summary-icon--blue">
+          <mat-icon>account_balance_wallet</mat-icon>
+        </div>
+        <div>
+          <p class="summary-label">Total Balance</p>
+          <p class="summary-value">{{ totalBalance | number:'1.2-2' }} €</p>
+        </div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-icon summary-icon--indigo">
+          <mat-icon>credit_card</mat-icon>
+        </div>
+        <div>
+          <p class="summary-label">Accounts</p>
+          <p class="summary-value">{{ totalAccounts }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Accounts -->
+    <h2 class="section-title">Your accounts</h2>
+
+    @if (accounts().length === 0) {
+      <div class="empty-state">
+        <mat-icon>account_balance_wallet</mat-icon>
+        <p>No accounts yet.</p>
+        <a class="btn btn-primary" routerLink="/accounts">Add your first account</a>
+      </div>
+    } @else {
+      <div class="account-grid">
+        @for (account of accounts(); track account.id) {
+          <div class="account-card">
+            <div class="account-card__header">
+              <div class="account-icon">
+                <mat-icon>{{ accountTypeIcon(account.type) }}</mat-icon>
+              </div>
+              <span class="account-type-badge">{{ accountTypeLabel(account.type) }}</span>
+            </div>
+            <p class="account-name">{{ account.name }}</p>
+            <p class="account-balance" [class.negative]="account.balance < 0">
+              {{ account.balance | number:'1.2-2' }} €
+            </p>
+          </div>
+        }
+      </div>
+    }
+  }
+</div>

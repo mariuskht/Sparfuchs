@@ -1,0 +1,52 @@
+<mat-sidenav-container class="shell-container">
+
+  <!-- ── Sidebar ──────────────────────────────────────────────────── -->
+  <mat-sidenav mode="side" opened class="sidebar">
+
+    <!-- Logo -->
+    <div class="sidebar-logo">
+      <div class="logo-icon">🏦</div>
+      <span class="logo-text">FinanceTracker</span>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="sidebar-nav">
+      @for (item of navItems; track item.route) {
+        <a
+          class="nav-item"
+          [routerLink]="item.route"
+          routerLinkActive="nav-item--active"
+          matRipple
+          [matRippleColor]="'rgba(255,255,255,0.06)'">
+          <span class="nav-icon">{{ item.icon }}</span>
+          <span>{{ item.label }}</span>
+        </a>
+      }
+    </nav>
+
+    <!-- User section -->
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="user-avatar">👤</div>
+        <div class="user-details">
+          <span class="user-name">{{ auth.currentUser()?.username }}</span>
+          <span class="user-role">Personal</span>
+        </div>
+      </div>
+      <button
+        class="logout-btn"
+        (click)="auth.logout()"
+        matTooltip="Logout"
+        matTooltipPosition="right">
+        🚪
+      </button>
+    </div>
+
+  </mat-sidenav>
+
+  <!-- ── Main content ──────────────────────────────────────────────── -->
+  <mat-sidenav-content class="main-content">
+    <router-outlet />
+  </mat-sidenav-content>
+
+</mat-sidenav-container>

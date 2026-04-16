@@ -3,6 +3,7 @@ using System;
 using FinanceTracker.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FinanceTracker.Data.Migrations
 {
     [DbContext(typeof(FinanceTrackerDbContext))]
-    partial class FinanceTrackerDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260413164502_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -238,22 +241,6 @@ namespace FinanceTracker.Data.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("PasswordHash")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("PasswordWrappedKey")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("RecoverySalt")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("RecoveryVerifier")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("RecoveryWrappedKey")
                         .IsRequired()
                         .HasColumnType("text");
 

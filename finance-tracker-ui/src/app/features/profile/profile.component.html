@@ -1,0 +1,50 @@
+<div class="profile-page">
+  <h1 class="page-title">Profile</h1>
+
+  <!-- User info card -->
+  <div class="card">
+    <h2 class="card-title">Account</h2>
+    @if (auth.currentUser(); as user) {
+      <div class="info-row">
+        <span class="info-label">Username</span>
+        <span class="info-value">{{ user.username }}</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Email</span>
+        <span class="info-value">{{ user.email }}</span>
+      </div>
+    }
+  </div>
+
+  <!-- Recovery key card -->
+  <div class="card">
+    <h2 class="card-title">Recovery key</h2>
+    <p class="card-desc">
+      Your recovery key lets you regain access to your data if you forget your password.
+      It is shown only once — store it somewhere safe (e.g. a password manager).
+    </p>
+
+    @if (recoveryPhrase) {
+      <div class="phrase-box">
+        <span class="phrase-label">Your recovery key</span>
+        <code class="phrase-value">{{ recoveryPhrase }}</code>
+        <button class="btn btn-secondary copy-btn" (click)="copyPhrase()">
+          {{ copied ? '✅ Copied' : '📋 Copy' }}
+        </button>
+      </div>
+      <p class="phrase-warning">
+        ⚠️ This key will not be shown again. Write it down or copy it now.
+      </p>
+    } @else {
+      <p class="no-phrase">
+        Your recovery key is stored securely. Generate a new one below if you have lost it
+        — your old key will be invalidated immediately.
+      </p>
+    }
+
+    <button class="btn btn-danger" (click)="regenerate()" [disabled]="regenerating">
+      @if (regenerating) { <span class="btn-icon spin">🔄</span> Generating… }
+      @else { 🔑 Generate new recovery key }
+    </button>
+  </div>
+</div>
