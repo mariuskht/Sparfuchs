@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <!-- Main gradient: indigo to violet -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%"   stop-color="#4f46e5"/>
+      <stop offset="100%" stop-color="#7c3aed"/>
+    </linearGradient>
+    <!-- Chart line glow -->
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <!-- Soft inner shadow for coin -->
+    <filter id="innerShadow">
+      <feOffset dx="0" dy="2"/>
+      <feGaussianBlur stdDeviation="2"/>
+      <feComposite operator="arithmetic" k2="-1" k3="1"/>
+    </filter>
+    <!-- Drop shadow for icon -->
+    <filter id="dropShadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#4f46e5" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+
+  <!-- Rounded square background with drop shadow -->
+  <rect x="12" y="12" width="176" height="176" rx="36" ry="36"
+        fill="url(#bgGrad)" filter="url(#dropShadow)"/>
+
+  <!-- Subtle inner highlight top-left -->
+  <rect x="12" y="12" width="176" height="80" rx="36" ry="36"
+        fill="white" opacity="0.06"/>
+
+  <!-- ── Grid lines (subtle background) ───────────────────────────────── -->
+  <line x1="40"  y1="148" x2="162" y2="148" stroke="white" stroke-width="0.8" opacity="0.15"/>
+  <line x1="40"  y1="124" x2="162" y2="124" stroke="white" stroke-width="0.8" opacity="0.10"/>
+  <line x1="40"  y1="100" x2="162" y2="100" stroke="white" stroke-width="0.8" opacity="0.10"/>
+
+  <!-- ── Chart bars ────────────────────────────────────────────────────── -->
+  <!-- Bar 1 -->
+  <rect x="46" y="126" width="18" height="22" rx="4" fill="white" opacity="0.25"/>
+  <!-- Bar 2 -->
+  <rect x="72" y="110" width="18" height="38" rx="4" fill="white" opacity="0.30"/>
+  <!-- Bar 3 -->
+  <rect x="98" y="96"  width="18" height="52" rx="4" fill="white" opacity="0.40"/>
+  <!-- Bar 4 (tallest, highlighted) -->
+  <rect x="124" y="74" width="18" height="74" rx="4" fill="white" opacity="0.85"/>
+
+  <!-- ── Trend line over bars ──────────────────────────────────────────── -->
+  <polyline
+    points="55,131  81,118  107,103  133,82"
+    fill="none"
+    stroke="#a5f3fc"
+    stroke-width="3"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    filter="url(#glow)"
+    opacity="0.95"/>
+
+  <!-- ── Dots on trend line ────────────────────────────────────────────── -->
+  <circle cx="55"  cy="131" r="4" fill="#a5f3fc" opacity="0.9"/>
+  <circle cx="81"  cy="118" r="4" fill="#a5f3fc" opacity="0.9"/>
+  <circle cx="107" cy="103" r="4" fill="#a5f3fc" opacity="0.9"/>
+  <!-- Top dot: larger + white ring for emphasis -->
+  <circle cx="133" cy="82"  r="6" fill="white"/>
+  <circle cx="133" cy="82"  r="4" fill="#a5f3fc"/>
+
+  <!-- ── Upward arrow at top-right of trend ───────────────────────────── -->
+  <g transform="translate(148, 58)" opacity="0.95">
+    <polyline points="-6,8  0,0  6,8" fill="none" stroke="#a5f3fc" stroke-width="2.5"
+              stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)"/>
+  </g>
+
+  <!-- ── Euro coin, top-left accent ───────────────────────────────────── -->
+  <circle cx="52" cy="60" r="18" fill="white" opacity="0.15"/>
+  <circle cx="52" cy="60" r="14" fill="none" stroke="white" stroke-width="1.5" opacity="0.4"/>
+  <text x="52" y="65" text-anchor="middle" font-family="Georgia, serif"
+        font-size="16" font-weight="bold" fill="white" opacity="0.75">€</text>
+</svg>

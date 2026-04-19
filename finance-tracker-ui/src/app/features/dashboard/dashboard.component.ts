@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
@@ -6,6 +6,7 @@ import { AuthService } from '../../core/services/auth.service';
 import { AccountService } from '../../core/services/account.service';
 import { TransactionService } from '../../core/services/transaction.service';
 import { Account, AccountType } from '../../core/models/account.model';
+import { Transaction } from '../../core/models/transaction.model';
 
 @Component({
   selector: 'app-dashboard',
@@ -16,6 +17,7 @@ import { Account, AccountType } from '../../core/models/account.model';
 })
 export class DashboardComponent implements OnInit {
   accounts = signal<Account[]>([]);
+  transactions = signal<Transaction[]>([]);
   loading = signal(true);
 
   constructor(
@@ -30,11 +32,29 @@ export class DashboardComponent implements OnInit {
       this.transactionService.getAll(),
     ]);
     this.accounts.set(this.accountService.withTransactionTotals(accounts, transactions));
+    this.transactions.set(transactions);
     this.loading.set(false);
   }
 
   get totalBalance() { return this.accounts().reduce((s, a) => s + a.balance, 0); }
   get totalAccounts() { return this.accounts().length; }
+
+  readonly monthlySummary = computed(() => {
+    const now = new Date();
+    const month = now.getMonth();
+    const year  = now.getFullYear();
+    let expenses = 0, income = 0;
+    for (const t of this.transactions()) {
+      const d = new Date(t.transactionDate);
+      if (d.getMonth() !== month || d.getFullYear() !== year) continue;
+      if (t.amount < 0) expenses += t.amount;
+      else              income   += t.amount;
+    }
+    return { expenses: Math.abs(expenses), income };
+  });
+
+  get monthlyExpenses() { return this.monthlySummary().expenses; }
+  get monthlyIncome()   { return this.monthlySummary().income;   }
 
   accountTypeIcon(type: AccountType): string {
     const map: Record<AccountType, string> = {

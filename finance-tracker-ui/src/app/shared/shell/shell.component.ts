@@ -4,6 +4,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatRippleModule } from '@angular/material/core';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { AuthService } from '../../core/services/auth.service';
+import { MatIconModule } from '@angular/material/icon';
 
 interface NavItem {
   label: string;
@@ -16,18 +17,18 @@ interface NavItem {
   standalone: true,
   imports: [
     RouterOutlet, RouterLink, RouterLinkActive,
-    MatSidenavModule, MatRippleModule, MatTooltipModule,
+    MatSidenavModule, MatRippleModule, MatTooltipModule, MatIconModule
   ],
   templateUrl: './shell.component.html',
   styleUrl: './shell.component.scss',
 })
 export class ShellComponent {
   readonly navItems: NavItem[] = [
-    { label: 'Dashboard',    icon: '📊', route: '/dashboard'    },
-    { label: 'Accounts',     icon: '💰', route: '/accounts'     },
-    { label: 'Transactions', icon: '💸', route: '/transactions' },
-    { label: 'Categories',   icon: '🏷️', route: '/categories'   },
-    { label: 'Profile',      icon: '👤', route: '/profile'      },
+    { label: 'Dashboard',    icon: 'dashboard', route: '/dashboard'    },
+    { label: 'Konten',     icon: 'account_balance_wallet', route: '/accounts'     },
+    { label: 'Transaktionen', icon: 'shopping_bag_speed', route: '/transactions' },
+    { label: 'Kategorien',   icon: 'label', route: '/categories'   },
+    { label: 'Profil',      icon: 'person', route: '/profile'      },
   ];
 
   constructor(public auth: AuthService) {}
