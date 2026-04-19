@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
@@ -38,28 +38,23 @@ export class DashboardComponent implements OnInit {
 
   get totalBalance() { return this.accounts().reduce((s, a) => s + a.balance, 0); }
   get totalAccounts() { return this.accounts().length; }
-  get monthlyExpenses() {
+
+  readonly monthlySummary = computed(() => {
     const now = new Date();
-    return Math.abs(
-      this.transactions()
-        .filter(t =>
-          t.amount < 0 &&
-          new Date(t.transactionDate).getMonth() === now.getMonth() &&
-          new Date(t.transactionDate).getFullYear() === now.getFullYear()
-        )
-        .reduce((sum, t) => sum + t.amount, 0)
-    );
-  }
-  get monthlyIncome() {
-    const now = new Date();
-    return this.transactions()
-      .filter(t =>
-        t.amount > 0 &&
-        new Date(t.transactionDate).getMonth() === now.getMonth() &&
-        new Date(t.transactionDate).getFullYear() === now.getFullYear()
-      )
-      .reduce((sum, t) => sum + t.amount, 0)
-  }
+    const month = now.getMonth();
+    const year  = now.getFullYear();
+    let expenses = 0, income = 0;
+    for (const t of this.transactions()) {
+      const d = new Date(t.transactionDate);
+      if (d.getMonth() !== month || d.getFullYear() !== year) continue;
+      if (t.amount < 0) expenses += t.amount;
+      else              income   += t.amount;
+    }
+    return { expenses: Math.abs(expenses), income };
+  });
+
+  get monthlyExpenses() { return this.monthlySummary().expenses; }
+  get monthlyIncome()   { return this.monthlySummary().income;   }
 
   accountTypeIcon(type: AccountType): string {
     const map: Record<AccountType, string> = {
