@@ -6,6 +6,7 @@ import { AuthService } from '../../core/services/auth.service';
 import { AccountService } from '../../core/services/account.service';
 import { TransactionService } from '../../core/services/transaction.service';
 import { Account, AccountType } from '../../core/models/account.model';
+import { Transaction } from '../../core/models/transaction.model';
 
 @Component({
   selector: 'app-dashboard',
@@ -16,6 +17,7 @@ import { Account, AccountType } from '../../core/models/account.model';
 })
 export class DashboardComponent implements OnInit {
   accounts = signal<Account[]>([]);
+  transactions = signal<Transaction[]>([]);
   loading = signal(true);
 
   constructor(
@@ -30,11 +32,34 @@ export class DashboardComponent implements OnInit {
       this.transactionService.getAll(),
     ]);
     this.accounts.set(this.accountService.withTransactionTotals(accounts, transactions));
+    this.transactions.set(transactions);
     this.loading.set(false);
   }
 
   get totalBalance() { return this.accounts().reduce((s, a) => s + a.balance, 0); }
   get totalAccounts() { return this.accounts().length; }
+  get monthlyExpenses() {
+    const now = new Date();
+    return Math.abs(
+      this.transactions()
+        .filter(t =>
+          t.amount < 0 &&
+          new Date(t.transactionDate).getMonth() === now.getMonth() &&
+          new Date(t.transactionDate).getFullYear() === now.getFullYear()
+        )
+        .reduce((sum, t) => sum + t.amount, 0)
+    );
+  }
+  get monthlyIncome() {
+    const now = new Date();
+    return this.transactions()
+      .filter(t =>
+        t.amount > 0 &&
+        new Date(t.transactionDate).getMonth() === now.getMonth() &&
+        new Date(t.transactionDate).getFullYear() === now.getFullYear()
+      )
+      .reduce((sum, t) => sum + t.amount, 0)
+  }
 
   accountTypeIcon(type: AccountType): string {
     const map: Record<AccountType, string> = {

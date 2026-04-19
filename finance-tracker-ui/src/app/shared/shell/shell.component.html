@@ -5,8 +5,7 @@
 
     <!-- Logo -->
     <div class="sidebar-logo">
-      <div class="logo-icon">🏦</div>
-      <span class="logo-text">FinanceTracker</span>
+      <img src="./assets/logo-sidebar.svg" alt="Finance Tracker Logo" class="logo-image"/>
     </div>
 
     <!-- Navigation -->
@@ -18,7 +17,7 @@
           routerLinkActive="nav-item--active"
           matRipple
           [matRippleColor]="'rgba(255,255,255,0.06)'">
-          <span class="nav-icon">{{ item.icon }}</span>
+          <mat-icon class="nav-icon">{{ item.icon }}</mat-icon>
           <span>{{ item.label }}</span>
         </a>
       }

@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 72" width="360" height="72">
+  <defs>
+    <linearGradient id="bgH" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%"   stop-color="#4f46e5"/>
+      <stop offset="100%" stop-color="#7c3aed"/>
+    </linearGradient>
+    <filter id="glowH">
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="shadowH">
+      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#4f46e5" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <!-- Icon box -->
+  <rect x="0" y="4" width="64" height="64" rx="16" fill="url(#bgH)" filter="url(#shadowH)"/>
+  <rect x="0" y="4" width="64" height="28" rx="16" fill="white" opacity="0.06"/>
+
+  <!-- Mini chart inside icon box -->
+  <rect x="10" y="50" width="7" height="9"  rx="2" fill="white" opacity="0.30"/>
+  <rect x="20" y="44" width="7" height="15" rx="2" fill="white" opacity="0.40"/>
+  <rect x="30" y="37" width="7" height="22" rx="2" fill="white" opacity="0.55"/>
+  <rect x="40" y="27" width="7" height="32" rx="2" fill="white" opacity="0.90"/>
+
+  <polyline points="13.5,55  23.5,48  33.5,41  43.5,33"
+    fill="none" stroke="#a5f3fc" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round"
+    filter="url(#glowH)" opacity="0.95"/>
+
+  <circle cx="43.5" cy="33" r="4" fill="white"/>
+  <circle cx="43.5" cy="33" r="2.5" fill="#a5f3fc"/>
+
+  <!-- Wordmark -->
+  <!-- "Finance" -->
+  <text x="82" y="38"
+        font-family="Inter, -apple-system, Helvetica Neue, sans-serif"
+        font-size="26" font-weight="700" letter-spacing="-0.5"
+        fill="#0f172a">Finance</text>
+  <!-- "Tracker" in indigo -->
+  <text x="82" y="60"
+        font-family="Inter, -apple-system, Helvetica Neue, sans-serif"
+        font-size="16" font-weight="500" letter-spacing="2"
+        fill="#6366f1">TRACKER</text>
+</svg>

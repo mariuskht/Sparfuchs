@@ -4,14 +4,14 @@
   <div class="page-header">
     <div>
       <h1>Dashboard</h1>
-      <p class="subtitle">Welcome back, <strong>{{ auth.currentUser()?.username }}</strong></p>
+      <p class="subtitle">Willkommen zurück, <strong>{{ auth.currentUser()?.username }}</strong></p>
     </div>
   </div>
 
   @if (loading()) {
     <div class="loading-state">
       <mat-icon>hourglass_empty</mat-icon>
-      <span>Loading your data…</span>
+      <span>Daten werden geladen...</span>
     </div>
   } @else {
 
@@ -22,17 +22,35 @@
           <mat-icon>account_balance_wallet</mat-icon>
         </div>
         <div>
-          <p class="summary-label">Total Balance</p>
+          <p class="summary-label">Gesamtguthaben</p>
           <p class="summary-value">{{ totalBalance | number:'1.2-2' }} €</p>
         </div>
       </div>
       <div class="summary-card">
-        <div class="summary-icon summary-icon--indigo">
+        <div class="summary-icon summary-icon--light-blue">
           <mat-icon>credit_card</mat-icon>
         </div>
         <div>
-          <p class="summary-label">Accounts</p>
+          <p class="summary-label">Konten</p>
           <p class="summary-value">{{ totalAccounts }}</p>
+        </div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-icon summary-icon--red">
+          <mat-icon>trending_down</mat-icon>
+        </div>
+        <div>
+          <p class="summary-label">Ausgaben (Monat)</p>
+          <p class="summary-value">{{ monthlyExpenses | number:'1.2-2' }} €</p>
+        </div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-icon summary-icon--green">
+          <mat-icon>trending_up</mat-icon>
+        </div>
+        <div>
+          <p class="summary-label">Einkommen (Monat)</p>
+          <p class="summary-value">{{ monthlyIncome | number:'1.2-2' }} €</p>
         </div>
       </div>
     </div>
