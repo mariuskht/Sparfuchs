@@ -5,8 +5,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { AuthService } from '../../core/services/auth.service';
 import { AccountService } from '../../core/services/account.service';
 import { TransactionService } from '../../core/services/transaction.service';
+import { CategoryService } from '../../core/services/category.service';
 import { Account, AccountType } from '../../core/models/account.model';
 import { Transaction } from '../../core/models/transaction.model';
+import { Category } from '../../core/models/category.model';
 
 @Component({
   selector: 'app-dashboard',
@@ -18,26 +20,32 @@ import { Transaction } from '../../core/models/transaction.model';
 export class DashboardComponent implements OnInit {
   accounts = signal<Account[]>([]);
   transactions = signal<Transaction[]>([]);
+  categories = signal<Category[]>([]);
   loading = signal(true);
 
   constructor(
     public auth: AuthService,
     private accountService: AccountService,
     private transactionService: TransactionService,
+    private categoryService: CategoryService,
   ) {}
 
   async ngOnInit() {
-    const [accounts, transactions] = await Promise.all([
+    const [accounts, transactions, categories] = await Promise.all([
       this.accountService.getAll(),
       this.transactionService.getAll(),
+      this.categoryService.getAll(),
     ]);
     this.accounts.set(this.accountService.withTransactionTotals(accounts, transactions));
     this.transactions.set(transactions);
+    this.categories.set(categories);
     this.loading.set(false);
   }
 
   get totalBalance() { return this.accounts().reduce((s, a) => s + a.balance, 0); }
   get totalAccounts() { return this.accounts().length; }
+  accountName(id: string) { return this.accounts().find(a => a.id === id)?.name ?? '—'; }
+  categoryName(id: string) { return this.categories().find(c => c.id === id)?.name ?? '—'; }
 
   readonly monthlySummary = computed(() => {
     const now = new Date();
