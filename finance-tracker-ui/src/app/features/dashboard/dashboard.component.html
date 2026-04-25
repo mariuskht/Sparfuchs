@@ -56,13 +56,13 @@
     </div>
 
     <!-- Accounts -->
-    <h2 class="section-title">Your accounts</h2>
+    <h2 class="section-title">Deine Konten</h2>
 
     @if (accounts().length === 0) {
       <div class="empty-state">
         <mat-icon>account_balance_wallet</mat-icon>
         <p>No accounts yet.</p>
-        <a class="btn btn-primary" routerLink="/accounts">Add your first account</a>
+        <a class="btn btn-primary" routerLink="/accounts">Füge dein erstes Konto hinzu!</a>
       </div>
     } @else {
       <div class="account-grid">
@@ -82,5 +82,35 @@
         }
       </div>
     }
+
+    <h2 class="section-title">Letzte Transaktionen</h2>
+
+    <table class="data-table">
+      <thead>
+      <tr>
+        <th>Datum</th>
+        <th>Konto</th>
+        <th>Kategorie</th>
+        <th>Beschreibung</th>
+        <th>Betrag</th>
+        <th></th>
+      </tr>
+      </thead>
+      <tbody>
+        @for (t of transactions(); track t.id) {
+          <tr>
+            <td class="date-cell">{{ t.transactionDate | date:'dd MMM yyyy' }}</td>
+            <td>{{ accountName(t.accountId) }}</td>
+            <td>{{ categoryName(t.categoryId) }}</td>
+            <td class="note-cell">{{ t.note ?? '—' }}</td>
+            <td>
+              <span [class]="t.amount >= 0 ? 'amount-positive' : 'amount-negative'">
+                {{ t.amount >= 0 ? '+' : '' }}{{ t.amount | number:'1.2-2' }} €
+              </span>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
   }
 </div>
